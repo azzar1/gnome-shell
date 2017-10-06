@@ -304,9 +304,14 @@ var Keyboard = new Lang.Class({
         return device.get_device_type() == Clutter.InputDeviceType.TOUCHSCREEN_DEVICE;
     },
 
+    _hasPhysicalAlphanumericKeyboard: function () {
+        let manager = Clutter.DeviceManager.get_default();
+        return manager.list_devices().some(d => d.is_alphanumeric_keyboard());
+    },
+
     _syncEnabled: function () {
         this._enableKeyboard = this._a11yApplicationsSettings.get_boolean(SHOW_KEYBOARD) ||
-                               this._lastDeviceIsTouchscreen();
+                               (this._lastDeviceIsTouchscreen() && !this._hasPhysicalAlphanumericKeyboard());
         if (!this._enableKeyboard && !this._keyboard)
             return;
 
